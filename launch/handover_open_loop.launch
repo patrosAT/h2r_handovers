@@ -1,0 +1,4 @@
+<launch>
+  <rosparam command="load" file="$(find human_robot_handover_ros)/cfg/handover.yaml" />
+  <node name="human_robot_handover_open_loop" pkg="human_robot_handover_ros" type="driver_open_loop.py" output="screen" />
+</launch>
