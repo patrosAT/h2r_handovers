@@ -5,17 +5,24 @@ import time
 import math
 import numpy as np
 import cv2
+
 # Ros
 import rospy
 import tf
 import actionlib
+import cv_bridge
+
 from std_msgs.msg import Empty
+from sensor_msgs.msg import Image, CompressedImage
 from geometry_msgs.msg import TwistStamped, Pose
+
 # Ros ACRV
 from rv_msgs.msg import ManipulatorState
 from rv_msgs.msg import ServoToPoseAction, ServoToPoseGoal
 from rv_msgs.msg import MoveToNamedPoseAction, MoveToNamedPoseGoal
 from rv_msgs.msg import ActuateGripperAction, ActuateGripperGoal
+from std_srvs.srv import Empty as EmptyRequest
+
 # Ros RTHTR
 from ggcnn_humanseg_ros.msg import GraspPrediction
 import helper.tf_helpers as tfh
@@ -27,10 +34,17 @@ class RTHTR:
       
         # Parameter
         self.state_move = 'startup'
+        self.init_depth = False
+        self.init_body = False
+        self.init_hand = False
         self.state_init = False
         self.ggcnn_init = False
         self.goal_set = False
 
+        self.depth_topic = rospy.get_param('/human_robot_handover_ros/camera/depth')
+        self.bodyparts_topic = rospy.get_param('/human_robot_handover_ros/subscription/bodyparts')
+        self.egohands_topic = rospy.get_param('/human_robot_handover_ros/subscription/egohands')
+        
         self.ggcnn_topic = rospy.get_param('/human_robot_handover_ros/ggcnn/topic')
         self.ggcnn_window = rospy.get_param('/human_robot_handover_ros/ggcnn/window')
         self.ggcnn_dev_pos = rospy.get_param('/human_robot_handover_ros/ggcnn/deviation_position')
@@ -42,19 +56,20 @@ class RTHTR:
         self.arm_gripper = rospy.get_param('/human_robot_handover_ros/robot/arm_gripper')
         
         self.position_error = rospy.get_param('/human_robot_handover_ros/movement/position_error')
-        self.move_x = rospy.get_param('/human_robot_handover_ros/movement/move_x')
-        self.move_y = rospy.get_param('/human_robot_handover_ros/movement/move_y')
-        self.move_z = rospy.get_param('/human_robot_handover_ros/movement/move_z')
         self.dist_ggcnn = rospy.get_param('/human_robot_handover_ros/movement/dist_ggcnn')
         self.dist_final = rospy.get_param('/human_robot_handover_ros/movement/dist_final')
-        self.move_final = rospy.get_param('/human_robot_handover_ros/movement/move_final')
         self.speed_approach = rospy.get_param('/human_robot_handover_ros/movement/speed_approach')
         self.scaling_handover = rospy.get_param('/human_robot_handover_ros/movement/scaling_handover')
 
         self.gripper_open = rospy.get_param('/human_robot_handover_ros/gripper/gripper_open')
+        self.gripper_closed = rospy.get_param('/human_robot_handover_ros/gripper/gripper_closed')
 
         self.visualization_type = rospy.get_param('/human_robot_handover_ros/visualization/activated')
         self.visualization_topic = rospy.get_param('/human_robot_handover_ros/visualization/topic')
+
+        self.depth = None
+        self.mask_body = None
+        self.mask_hand = None
 
         self.servo_goal = ServoToPoseGoal()
         self.error_code = 0
@@ -84,6 +99,9 @@ class RTHTR:
         self.grab_width = None
         self.grab_quality = None
 
+        # Init
+        self.bridge = cv_bridge.CvBridge()
+
         # Robot interface
         self.servo_pose_client = actionlib.SimpleActionClient(self.arm_servo_pose, ServoToPoseAction)
         self.servo_pose_client.wait_for_server()
@@ -98,19 +116,28 @@ class RTHTR:
         print("STARTUP -> gripper_client OK")
 
         # Subsriber
-        rospy.Subscriber(self.arm_state, ManipulatorState, self._callback_state, queue_size=1)
+        rospy.Subscriber(self.depth_topic, Image, self._callback_depth, queue_size=1)
+        rospy.Subscriber(self.bodyparts_topic, CompressedImage, self._callback_bodyparts, queue_size=1)
+        rospy.Subscriber(self.egohands_topic, CompressedImage, self._callback_egohands, queue_size=1)
         rospy.Subscriber(self.ggcnn_topic, GraspPrediction, self._callback_ggcnn, queue_size=1)
+        rospy.Subscriber(self.arm_state, ManipulatorState, self._callback_state, queue_size=1)
+        
+        # Services
+        self.recover = rospy.ServiceProxy('/arm/recover', EmptyRequest)
         
         # Visualization
         if (self.visualization_type):
             self.pub_visualization = rospy.Publisher(self.visualization_topic, Empty, queue_size=1)
+            self.pub_debug = rospy.Publisher('handover/DEBUG', Image, queue_size=1)
             rospy.Subscriber(self.visualization_topic, Empty, self._callback_visualization, queue_size=1)
 
 
     #### FIXED MOVEMENTS ####
-    def _move_start(self):
+    def _move_start(self, delay=0.):
         self.named_pose_client.send_goal(MoveToNamedPoseGoal(pose_name='patros_start', speed=self.speed_approach))
         self.named_pose_client.wait_for_result()
+        if (delay > 0.):
+            rospy.sleep(delay)
 
     def _move_home(self):
         self.named_pose_client.send_goal(MoveToNamedPoseGoal(pose_name='patros_home', speed=self.speed_approach))
@@ -132,9 +159,17 @@ class RTHTR:
 
     # HELPER to reset all parameter
     def _reset_parameter(self):
+        self.init_depth = False
+        self.init_body = False
+        self.init_hand = False
         self.state_init = False
         self.ggcnn_init = False
         self.goal_set = False
+
+        self.depth = None
+        self.mask_body = None
+        self.mask_hand = None
+        self.deviation_arr = []
 
         self.servo_goal = ServoToPoseGoal()        
         self.error_code = 0
@@ -191,6 +226,51 @@ class RTHTR:
             self.pub_visualization.publish(Empty())
 
 
+    # HELPER to check depth 
+    def _check_dist(self):
+
+        if (self.init_depth) and (self.init_body) and (self.init_hand):
+            depth_0 = np.ones(self.depth.shape, np.uint8) * 255
+            depth_0[self.depth == 0] = 0
+            depth_0[np.isnan(self.depth)] = 0
+            depth_0[self.depth >= (self.P_off + 0.05)] = 0
+            depth_0[self.depth <= (self.P_off - 0.05)] = 0
+            depth_0[self.mask_body != 0] = 0
+            #depth_0[self.mask_hand != 0] = 0
+
+            if (np.sum(depth_0) < 2000):
+                self.deviation_arr.append(True)
+            else:
+                self.deviation_arr.append(False)
+
+            if (np.sum(self.deviation_arr) == len(self.deviation_arr)):
+                print('ABORT')
+                self.servo_pose_client.cancel_all_goals()
+                self._move_start()
+                self._gripper_open(self.gripper_open)
+                self._reset_parameter()
+
+            if (len(self.deviation_arr) >= (self.ggcnn_window * 10)):
+                self.deviation_arr.pop(0)
+
+
+    # HELPER to check goal
+    def _check_goal(self):
+
+          if ((abs(self.servo_goal.stamped_pose.pose.position.x) - abs(self.grab_xP)) > self.ggcnn_dev_pos) or \
+             ((abs(self.servo_goal.stamped_pose.pose.position.y) - abs(self.grab_yP)) > self.ggcnn_dev_pos) or \
+             ((abs(self.servo_goal.stamped_pose.pose.position.z) - abs(self.grab_zP)) > self.ggcnn_dev_pos) or \
+             ((abs(self.servo_goal.stamped_pose.pose.orientation.x) - abs(self.grab_xO)) > self.ggcnn_dev_orient) or \
+             ((abs(self.servo_goal.stamped_pose.pose.orientation.y) - abs(self.grab_yO)) > self.ggcnn_dev_orient) or \
+             ((abs(self.servo_goal.stamped_pose.pose.orientation.z) - abs(self.grab_zO)) > self.ggcnn_dev_orient) or \
+             ((abs(self.servo_goal.stamped_pose.pose.orientation.w) - abs(self.grab_wO)) > self.ggcnn_dev_orient):
+
+              print('UPDATE GOAL')
+              self.servo_pose_client.cancel_all_goals()
+              self.goal_set = False
+              self._set_goal()
+            
+
     #### OBJECT-BASED MOVEMENT ####
     def move(self):
 
@@ -199,13 +279,12 @@ class RTHTR:
             ## HANDLE ERRORS ##
             if (self.error_code != 0):
                 rospy.logerr('ERROR CODE: %d' % (self.error_code))
-
-                # Stop any movement
                 self.servo_pose_client.cancel_all_goals()
+                self.recover()
 
                 # Move to start
+                self._gripper_open(self.gripper_open)
                 self._move_start()
-                rospy.sleep(0.5)
 
                 # Eliminate previous measuements (unuseful)
                 self._reset_parameter()
@@ -216,7 +295,8 @@ class RTHTR:
             if(self.state_move == 'startup'):
 
                 # Move to start
-                self._move_start()
+                self._move_start(0.5)
+                self._gripper_open(self.gripper_open)
                 self.state_move = 'move_ggcnn'
 
                 # Eliminate previous measuements (unuseful)
@@ -226,7 +306,7 @@ class RTHTR:
             ## CHECK VIABLE STATE ##
             if not (self.state_init) or not (self.ggcnn_init):
                 print('State init:', self.state_init, 'GGCNN init:', self.ggcnn_init)
-                rospy.sleep(0.5)
+                rospy.sleep(0.1)
                 continue
 
             
@@ -237,20 +317,22 @@ class RTHTR:
                 if (abs(self.P_off) > self.dist_ggcnn):
                     if not (self.goal_set):
                         self._set_goal()
-
+                    self._check_goal()
+                    
                 # STAGE 2: dist_ggcnn > P_off > dist_final
                 elif (abs(self.P_off) > self.dist_final):
-                    pass
+                    self._check_dist()
 
                 # STAGE 3: dist_final > P_off
                 else:
                     print('Stage 3')
                     self.servo_pose_client.wait_for_result()
                     self.goal_set = False
+                    self.servo_pose_client.cancel_all_goals()
                     print('Goal reached')
 
                     # STAGE 4: Grab object and drop it
-                    self._gripper_close(0.01)
+                    self._gripper_close(self.gripper_closed)
                     self._move_home()
                     self._move_bin()
                     self._gripper_open(self.gripper_open)
@@ -258,6 +340,20 @@ class RTHTR:
                     # STAGE 5: Restart: move to start & reset parameter
                     self._move_start()
                     self._reset_parameter()
+
+
+    #### CALLBACK DEPTH & MASKS ####
+    def _callback_depth(self, msg):
+        self.depth = self.bridge.imgmsg_to_cv2(msg)
+        self.init_depth = True
+
+    def _callback_bodyparts(self, msg):
+        self.mask_body = self.bridge.compressed_imgmsg_to_cv2(msg)
+        self.init_body = True
+
+    def _callback_egohands(self, msg):
+        self.mask_hand = self.bridge.compressed_imgmsg_to_cv2(msg)
+        self.init_hand = True
 
 
     #### CALLBACK GGCNN ####
@@ -289,12 +385,12 @@ class RTHTR:
 
                 # Drop values outside region of interest
                 delete_upp = np.any([[(self.ggcnn_xP_arr > (mean_xP + self.ggcnn_dev_pos))], 
-                                    [(self.ggcnn_yP_arr > (mean_yP + self.ggcnn_dev_pos))], 
-                                    [(self.ggcnn_zP_arr > (mean_zP + self.ggcnn_dev_pos))], 
-                                    [(self.ggcnn_xO_arr > (mean_xO + self.ggcnn_dev_orient))], 
-                                    [(self.ggcnn_yO_arr > (mean_yO + self.ggcnn_dev_orient))], 
-                                    [(self.ggcnn_zO_arr > (mean_zO + self.ggcnn_dev_orient))], 
-                                    [(self.ggcnn_wO_arr > (mean_wO + self.ggcnn_dev_orient))]], axis=0)
+                                     [(self.ggcnn_yP_arr > (mean_yP + self.ggcnn_dev_pos))], 
+                                     [(self.ggcnn_zP_arr > (mean_zP + self.ggcnn_dev_pos))], 
+                                     [(self.ggcnn_xO_arr > (mean_xO + self.ggcnn_dev_orient))], 
+                                     [(self.ggcnn_yO_arr > (mean_yO + self.ggcnn_dev_orient))], 
+                                     [(self.ggcnn_zO_arr > (mean_zO + self.ggcnn_dev_orient))], 
+                                     [(self.ggcnn_wO_arr > (mean_wO + self.ggcnn_dev_orient))]], axis=0)
                 delete_low =  np.any([[(self.ggcnn_xP_arr < (mean_xP - self.ggcnn_dev_pos))], 
                                       [(self.ggcnn_yP_arr < (mean_yP - self.ggcnn_dev_pos))], 
                                       [(self.ggcnn_zP_arr < (mean_zP - self.ggcnn_dev_pos))], 
@@ -365,7 +461,6 @@ class RTHTR:
             self.P_off = math.sqrt(self.xP_off**2 + self.yP_off**2 + self.zP_off**2)
 
             self.state_init = True
-
 
 
     #### CALLBACK VISUALIZATION ####
