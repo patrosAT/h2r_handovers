@@ -1,5 +1,5 @@
 BSD 4-Clause License
-ROS Bodyparts RefineNet for non-commercial purposes.
+ROS GGCNN-based driver package for the franka emika robot arm.
 
 Copyright (c) 2020, Patrick Rosenberger
 All rights reserved.
