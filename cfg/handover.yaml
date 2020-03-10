@@ -1,4 +1,9 @@
 human_robot_handover_ros:
+    camera:
+        depth: /camera/depth/image_meters_aligned
+    subscription:
+        bodyparts: /bodyparts/topic
+        egohands: /egohands/topic
     ggcnn: 
         topic: /ggcnn_humanseg
         window: 5
@@ -11,16 +16,13 @@ human_robot_handover_ros:
         arm_gripper: /arm/gripper
     movement:
         position_error: 0.03
-        move_x: True
-        move_y: True
-        move_z: True
-        dist_ggcnn: 0.5
-        dist_final: 0.2
-        move_final: True
+        dist_ggcnn: 0.4
+        dist_final: 0.25
         speed_approach: 0.4
         scaling_handover: 1
     gripper:
         gripper_open: 0.08
+        gripper_closed: 0.001
     visualization: 
-        topic: /handover/velocity
+        topic: /handover
         activated: True

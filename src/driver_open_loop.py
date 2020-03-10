@@ -367,7 +367,6 @@ class RTHTR:
             self.state_init = True
 
 
-
     #### CALLBACK VISUALIZATION ####
     def _callback_visualization(self, msg):
             
