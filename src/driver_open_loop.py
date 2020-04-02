@@ -41,7 +41,6 @@ class RTHTR:
         self.arm_named_pose = rospy.get_param('/human_robot_handover_ros/robot/arm_named_pose')
         self.arm_gripper = rospy.get_param('/human_robot_handover_ros/robot/arm_gripper')
         
-        self.position_error = rospy.get_param('/human_robot_handover_ros/movement/position_error')
         self.move_x = rospy.get_param('/human_robot_handover_ros/movement/move_x')
         self.move_y = rospy.get_param('/human_robot_handover_ros/movement/move_y')
         self.move_z = rospy.get_param('/human_robot_handover_ros/movement/move_z')

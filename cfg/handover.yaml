@@ -15,7 +15,6 @@ human_robot_handover_ros:
         arm_named_pose: /arm/cartesian/named_pose
         arm_gripper: /arm/gripper
     movement:
-        position_error: 0.03
         dist_ggcnn: 0.4
         dist_final: 0.25
         speed_approach: 0.4
