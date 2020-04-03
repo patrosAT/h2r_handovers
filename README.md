@@ -1,15 +1,15 @@
 # ROS node for real-time bodyparts detection #
 
-This ROS node provides a driver for obejct-independent human-to-robot handover using robotic vision. The approach requires only a rgbd camera mounted to the end effector and can therefore be used in a variety of use cases without the need for artificial setups like markers or external cameras. The object-independent grasp selection approach ([GGCNN](https://github.com/patrosAT/ggcnn_humanseg_ros.git)) ensures general applicability even in cluttered environments. To ensure save handovers, the approach uses two NN to segment [body parts](https://github.com/patrosAT/bodyparts_ros) and [hands](https://github.com/patrosAT/egohands_ros).
+This ROS node provides a driver for obejct-independent human-to-robot handovers using robotic vision. The approach requires only one RGBD camera and can therefore be used in a variety of use cases without the need for artificial setups like markers or external cameras. The object-independent grasp selection approach ([GGCNN](https://github.com/patrosAT/ggcnn_humanseg_ros.git)) ensures general applicability even in cluttered environments. To ensure save handovers, the approach uses two NN to segment [body parts](https://github.com/patrosAT/bodyparts_ros) and [hands](https://github.com/patrosAT/egohands_ros).
  
 The movements are based on input of the three packages [Bodyparts](https://github.com/patrosAT/bodyparts_ros), [Egohands](https://github.com/patrosAT/egohands_ros) and [GGCNN](https://github.com/patrosAT/ggcnn_humanseg_ros.git).
 
 **Input**
-* **Depth image:** [sensor_msgs/Image](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Image.html)
+* **Depth Image:** [sensor_msgs/Image](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Image.html)
 * **Bodyparts:** [sensor_msgs/CompressedImage](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/CompressedImage.html)
 * **Egohands:** [sensor_msgs/CompressedImage](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/CompressedImage.html)
-* **Ggcnn:** [ggcnn_humanseg_ros/GraspPrediction](https://github.com/patrosAT/ggcnn_humanseg_ros/blob/master/msg/GraspPrediction.msg)
-* **Arm state** [rv_msgs/ManipulatorState](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/msg/ManipulatorState.msg)
+* **GGCNN:** [ggcnn_humanseg_ros/GraspPrediction](https://github.com/patrosAT/ggcnn_humanseg_ros/blob/master/msg/GraspPrediction.msg)
+* **Arm State:** [rv_msgs/ManipulatorState](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/msg/ManipulatorState.msg)
 
 **Output**
 * **Servo Pose:** [rv_msgs/ServoToPose](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/action/ServoToPose.action)
@@ -17,7 +17,7 @@ The movements are based on input of the three packages [Bodyparts](https://githu
 * **Gripper:** [rv_msgs/ActuateGripper](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/action/ActuateGripper.action)
 
 #### Example of a banana from a lateral perspective: ####
-<div style="text-align:center"><img src="./imgs/graspPoint.png" width="500"/></div>
+<img src="./imgs/graspPoint.png" width="500"/>
 
 
 ## Getting Started ##
@@ -26,18 +26,30 @@ The movements are based on input of the three packages [Bodyparts](https://githu
 
 The models have been tested with Python 2.7.
 
-### Hardware ###
+### Hardware Requirements ###
 
 * Depth camera *(for this project an [realsense D435](https://www.intelrealsense.com/depth-camera-d435/) was used)*
 * GPU >= 4 GB
  
-### Software ###
+### Software Requirements ###
 
 **ATTENTION: This package requires the [ROS](https://www.ros.org/) operating system!**
 
-* Python 2.x: see [requirements.txt](requirements.txt)
+* Python: see [requirements.txt](requirements.txt)
+* ROS packages:
+```
+rospy
+actionlib
+std_msgs
+geometry_msgs
+tf
+tf2_ros
+tf2_geometry_msgs
+rv_msgs
+rv_manipulation_driver
+```
 
-### Ros 3rd party packages ###
+### ROS 3rd party packages ###
 
 * [Bodyparts_ros](https://github.com/patrosAT/bodyparts_ros.git)
 * [Egohands_ros](https://github.com/patrosAT/egohands_ros.git)
@@ -47,17 +59,17 @@ The models have been tested with Python 2.7.
 
 ### Launch ###
 
-Before launching the package, make sure that the camera and the 3rd party ros packages are up and running. 
+Before launching the package, make sure that the camera and the 3rd party ROS packages are up and running. 
 
-The ros package contains a launch file:
+The ROS package contains a launch file:
 * **[Closed-loop publisher](launch/handover_closed_loop.launch):** Interacts with the robot at a 0.1Hz rate.
 
 **Input**
-* **Depth image:** [sensor_msgs/Image](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Image.html)
+* **Depth Image:** [sensor_msgs/Image](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Image.html)
 * **Bodyparts:** [sensor_msgs/CompressedImage](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/CompressedImage.html)
 * **Egohands:** [sensor_msgs/CompressedImage](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/CompressedImage.html)
-* **Ggcnn:** [ggcnn_humanseg_ros/GraspPrediction](https://github.com/patrosAT/ggcnn_humanseg_ros/blob/master/msg/GraspPrediction.msg)
-* **Arm state** [rv_msgs/ManipulatorState](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/msg/ManipulatorState.msg)
+* **GGCNN:** [ggcnn_humanseg_ros/GraspPrediction](https://github.com/patrosAT/ggcnn_humanseg_ros/blob/master/msg/GraspPrediction.msg)
+* **Arm State** [rv_msgs/ManipulatorState](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/msg/ManipulatorState.msg)
 
 **Output**
 * **Servo Pose:** [rv_msgs/ServoToPose](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/action/ServoToPose.action)
@@ -76,8 +88,8 @@ The initial setup can be changed by adapting the [handover.yaml](cfg/handover.ya
 * **bodyparts:** Rostopic the node is subcribing to (bodyparts).
 * **egohands:** Rostopic the node is subcribing to (egohands).
 
-**Ggcnn:**
-* **topic:** Rostopic the node is subcribing to (ggcnn).
+**GGCNN:**
+* **topic:** Rostopic the node is subcribing to (GGCNN).
 * **window:** Number of windows that are combined to make the picking point estimation more robust.
 * **deviation_position:** Maximal deviation in x, y and z form the window's mean. Estimations with a larger deviation in one of these directions are dropped and not considered for calculating the grasp point. 
 * **deviation_orientation:** Maximal deviation in x, y, z, and w (orientation) form the window's mean. Estimations with a larger deviation in one of these orientations are dropped and not considered for calculating the grasp point.
@@ -89,7 +101,7 @@ The initial setup can be changed by adapting the [handover.yaml](cfg/handover.ya
 * **arm_gripper:** Rostopic the node is publishing to (gripper, see [rv_manipulation_driver](https://github.com/RoboticVisionOrg/rv_manipulation_driver)).
 
 **Movement:**
-* **dist_ggcnn:** Distance to object until which the ggcnn will update the picking point *(future feature, not implemented yet)*
+* **dist_ggcnn:** Distance to object until which the GGCNN will update the picking point *(future feature, not implemented yet)*.
 * **dist_final:** Distance to object until which the system will monitor the object to detect deviations or unforseen events. Such cases will lead the system to abort the handover.
 * **speed_approach:** Speed during setup and object transfer to dropping location (see [rv_manipulation_driver](https://github.com/RoboticVisionOrg/rv_manipulation_driver)).
 * **scaling_handover:** Speed during the handover (see [rv_manipulation_driver](https://github.com/RoboticVisionOrg/rv_manipulation_driver)).
@@ -100,7 +112,7 @@ The initial setup can be changed by adapting the [handover.yaml](cfg/handover.ya
 
 **Visualization:** The visualization node publishes the picking point to be displayed in RVIZ.
 * **topic:** Rostopic the node is publishing to (visualization).
-* **activated:** Turn on/off visualization: *use only keywords **"True"** or **"False"***
+* **activated:** Turn on/off visualization: *use keywords **"True"** or **"False"** only*.
 
 
 ## Acknowledgments ##
