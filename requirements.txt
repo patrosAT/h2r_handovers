@@ -1,4 +1,0 @@
-numpy
-opencv-contrib-python
-opencv-python
-pkg-resources

@@ -60,6 +60,9 @@ This image shows the handover of a banana as seen by the robot. The visualizatio
 
 **Special thanks go to [TU Wien](www.tuwien.at) and the [Australian Center for Robotic Vision (ACRV)](http://roboticvision.org) for enabling this research project.**
 
+<img src="./imgs/CD_TUWien.png" height="70" alt="logo TU Wien"/>
+<img src="./imgs/CD_Birmingham.jpeg" height="70" alt="logo University Birmingham"/>
+<img src="./imgs/CD_ACRV.png" height="70" alt="logo ACRV"/>
 
 ## License ##
 
