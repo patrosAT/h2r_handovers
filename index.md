@@ -76,7 +76,7 @@ The code developed within this project is written in Python 2.7 and 3.6, dependi
 
 [This youtube video](https://youtu.be/GjPDilJO4F0) shows the handover of 20 household objects from a frontal and a lateral perspective.
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=GjPDilJO4F0" target="_blank"><img src="http://img.youtube.com/vi/GjPDilJO4F0/0.jpg" 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=GjPDilJO4F0" target="_blank"><img src="http://img.youtube.com/vi/GjPDilJO4F0/1.jpg" 
 alt="YouTube H2R Handovers" width="560" height="415" border="10" /></a>
 
 
