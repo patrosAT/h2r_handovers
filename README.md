@@ -16,7 +16,17 @@ The movements are based on input of the three packages [Bodyparts](https://githu
 * **Named Pose:** [rv_msgs/MoveToNamedPose](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/action/MoveToNamedPose.action)
 * **Gripper:** [rv_msgs/ActuateGripper](https://github.com/RoboticVisionOrg/rv_msgs/blob/master/action/ActuateGripper.action)
 
-#### Example of a banana from a lateral perspective: ####
+
+## Examples ##
+
+### Example Video ###
+This video shows the handover of 20 household objects from a frontal and a lateral perspective.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/GjPDilJO4F0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Example RVIZ ###
+This image shows the handover of a banana as seen by the robot. The visualization was done in RVIZ.
+
 <img src="./imgs/graspPoint.png" width="500"/>
 
 
