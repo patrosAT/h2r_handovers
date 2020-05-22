@@ -1,4 +1,4 @@
-# ROS node for real-time bodyparts detection #
+# Object-Independent Human-to-Robot Handovers using Real Time Robotic Vision #
 
 This ROS node provides a driver for obejct-independent human-to-robot handovers using robotic vision. The approach requires only one RGBD camera and can therefore be used in a variety of use cases without the need for artificial setups like markers or external cameras. The object-independent grasp selection approach ([GGCNN](https://github.com/patrosAT/ggcnn_humanseg_ros.git)) ensures general applicability even in cluttered environments. To ensure save handovers, the approach uses two NN to segment [body parts](https://github.com/patrosAT/bodyparts_ros) and [hands](https://github.com/patrosAT/egohands_ros).
  
