@@ -23,7 +23,7 @@ The movements are based on input of the three packages [Bodyparts](https://githu
 [This youtube video](https://youtu.be/GjPDilJO4F0) shows the handover of 20 household objects from a frontal and a lateral perspective.
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=GjPDilJO4F0" target="_blank"><img src="http://img.youtube.com/vi/GjPDilJO4F0/0.jpg" 
-alt="YouTube H2R Handovers" width="560" height="315" border="10" /></a>
+alt="YouTube H2R Handovers" width="560" height="415" border="10" /></a>
 
 ### Example RVIZ ###
 This image shows the handover of a banana as seen by the robot. The visualization was done in RVIZ.
