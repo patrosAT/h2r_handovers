@@ -76,17 +76,17 @@ The code developed within this project is written in Python 2.7 and 3.6, dependi
 
 [This youtube video](https://youtu.be/GjPDilJO4F0) shows the handover of 20 household objects from a frontal and a lateral perspective.
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=GjPDilJO4F0" target="_blank"><img src="http://img.youtube.com/vi/GjPDilJO4F0/2.jpg" 
-alt="YouTube H2R Handovers" width="560" height="415" border="10" /></a>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=GjPDilJO4F0" target="_blank"><img src="./imgs/handover_toy_car.png" 
+alt="YouTube H2R Handovers" width="400" /></a>
 
 
 ## Acknowledgments ##
 
 **Special thanks go to [TU Wien](www.tuwien.at) and the [Australian Center for Robotic Vision (ACRV)](http://roboticvision.org) for enabling this research project.**
 
-<p><img src="./imgs/CD_TUWien.png" height="70" alt="logo TU Wien"/></p>
-<p><img src="./imgs/CD_Birmingham.jpeg" height="70" alt="logo University Birmingham"/></p>
-<p><img src="./imgs/CD_ACRV.png" height="70" alt="logo ACRV"/></p>
+<p><img src="./imgs/CD_TUWien.png" height="50" alt="logo TU Wien"/></p>
+<p><img src="./imgs/CD_Birmingham.jpeg" height="50" alt="logo University Birmingham"/></p>
+<p><img src="./imgs/CD_ACRV.png" height="50" alt="logo ACRV"/></p>
 
 ## License ##
 
@@ -97,4 +97,4 @@ The project is licensed under the BSD 4-Clause License.
 
 Please keep in mind that no system is 100% fault tolerant and that this demonstrator is focused on pushing the boundaries of innovation. Careless interaction with robots can lead to serious injuries, always use appropriate caution!
 
-<p style="text-align:justyfy">This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. in no event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.</p>
+This software is provided by the copyright holders and contributors "as is" and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed. in no event shall the copyright holder or contributors be liable for any direct, indirect, incidental, special, exemplary, or consequential damages (including, but not limited to, procurement of substitute goods or services; loss of use, data, or profits; or business interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
