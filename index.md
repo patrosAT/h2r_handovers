@@ -11,13 +11,21 @@ description: Object-Independent Human-to-Robot Handovers using Real Time Robotic
 **Preprint:** *coming soon*
 
 **Code:** [https://github.com/patrosAT/h2r_handovers](https://github.com/patrosAT/h2r_handovers)
+<p align="center">
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=GjPDilJO4F0" target="_blank"><img src="./imgs/handover_toy_car.png" 
+alt="YouTube H2R Handovers" width="400" /></a>
+</p>
+
+[The youtube video](https://youtu.be/GjPDilJO4F0) shows the handover of 20 household objects from a frontal and a lateral perspective.
 
 ---
 
 ## Approach ##
 This project introduces an approach for safe and object-independent human-to-robot handovers using real time robotic vision and manipulation. We aim for general applicability by combining the power of a generic object detector *(darknet_ros)*, a real-time grasp selection algorithm *(ggcnn_humanseg_ros)* and two semantic segmentation modules for body segmentation *(bodyparts_ros)* and hand segmentation *(egohands_ros)*.
 
+<p align="center">
 <img src="./imgs/approach_GITHUB.png" width="400"/>
+</p>
 
 The appraoch uses a RGB-D camera that is mounted at the robot's end effector and provides a steady stream of RGB and depth images. For each frame, the object detector detects all objects within the camera's field of view and selects the ones within the robot's reach. Further, all pixels belonging to the human interaction partner and the partner's hands are segmented. The grasp selection module uses these inputs to calculate the a grasp quality estimation along with the associated grasp orientation and gripper width for each pixel in the depth image. Finally, the grasp point with the highest estimated success likelihood is chosen and translated into the robot's base frame. The robot driver module moves the end effector towards the selected grasp point via visual servoing. The segmentation masks are updated in real-time to dynamically handle the changes in the hand/body positions.
 
@@ -25,31 +33,41 @@ The appraoch uses a RGB-D camera that is mounted at the robot's end effector and
 
 This module implements a light-weight [RefineNet NN](https://github.com/DrSleep/light-weight-refinenet) trained on the PASCAL body parts data set. The NN is capable of detecting human body parts and can differentiate between heads, torsos, upper arms, lower arms, upper legs, and lower legs with a mean intersection-over-union (mIoU) score of 0.649 ([Nek18](https://github.com/DrSleep/light-weight-refinenet)).
 
+<p align="center">
 <img src="./imgs/bodyFront_RGB.png" width="400"/>
+</p>
 
 ### Module egohands_ros ###
 
 This module implements a [Scene Parsing framework (PSPNet)](https://github.com/CSAILVision/semantic-segmentation-pytorch) retrained on the egohands data set. The trained model achieved a mIoU of 0.897 and a pixel accuracy of 0.986 on the validation set.
 
+<p align="center">
 <img src="./imgs/handFront_RGB.png" width="400"/>
+</p>
 
 ### Module darknet_ros ###
 
 This module implements a [YOLO v3 object detector](https://github.com/leggedrobotics/darknet_ros), trained on the COCO dataset. Since our goal is to enable handovers for any class of objects, we allow misclassifications for objects that do not belong to one of the 80 categories of the dataset.
 
+<p align="center">
 <img src="./imgs/yoloHand.png" width="400"/>
+</p>
 
 ### Module ggcnn_humanseg_ros ###
 
 This module implements a [GGCNN](https://github.com/dougsm/ggcnn). The node outputs the best picking location based on an object's depth image and the input of the three packages [bodyparts_ros](https://github.com/patrosAT/bodyparts_ros), [egohands_ros](https://github.com/patrosAT/egohands_ros) and [rarknet_ros](https://github.com/leggedrobotics/darknet_ros). Extensive pre- and post-processing prevents the picking of human body parts.
 
+<p align="center">
 <img src="./imgs/ggcnn_RGB.png" width="400"/>
+<p>
 
 ### Module h2r_handovers ###
 
 This module provides a driver for object-independent human-to-robot handovers using robotic vision. The approach requires only one RGBD camera and can therefore be used in a variety of use cases without the need for artificial setups like markers or external cameras.
 
+<p align="center">
 <img src="./imgs/graspPoint.png" width="400"/>
+</p>
 
 
 ### Software ###
@@ -69,21 +87,13 @@ The code developed within this project is written in Python 2.7 and 3.6, dependi
 * Depth camera *(this project used a [Realsense D435](https://www.intelrealsense.com/depth-camera-d435/)).*
  
 
-## Examples ##
-
-[This youtube video](https://youtu.be/GjPDilJO4F0) shows the handover of 20 household objects from a frontal and a lateral perspective.
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=GjPDilJO4F0" target="_blank"><img src="./imgs/handover_toy_car.png" 
-alt="YouTube H2R Handovers" width="400" /></a>
-
-
 ## Acknowledgments ##
 
 **Special thanks go to [TU Wien](www.tuwien.at) and the [Australian Center for Robotic Vision (ACRV)](http://roboticvision.org) for enabling this research project.**
 
-<p><img src="./imgs/CD_TUWien.png" height="50" alt="logo TU Wien"/></p>
-<p><img src="./imgs/CD_Birmingham.jpeg" height="50" alt="logo University Birmingham"/></p>
-<p><img src="./imgs/CD_ACRV.png" height="50" alt="logo ACRV"/></p>
+<p align="center"><img src="./imgs/CD_TUWien.png" height="50" alt="logo TU Wien"/></p>
+<p align="center"><img src="./imgs/CD_Birmingham.jpeg" height="50" alt="logo University Birmingham"/></p>
+<p align="center"><img src="./imgs/CD_ACRV.png" height="50" alt="logo ACRV"/></p>
 
 ## License ##
 
