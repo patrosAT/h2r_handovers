@@ -4,8 +4,6 @@ title:  H2R Handovers
 description: Object-Independent Human-to-Robot Handovers using Real Time Robotic Vision
 ---
 
-This project introduces an approach for safe and object-independent human-to-robot handovers using real time robotic vision and manipulation.
-
 **Authors:** Patrick Rosenberger, Akansel Cosgun, Rhys Newbury, Jun Kwan, Valerio Ortenzi, Peter Corke and Manfred Grafinger
 
 **Publication:** *cooming soon*
@@ -16,13 +14,12 @@ This project introduces an approach for safe and object-independent human-to-rob
 
 ---
 
-## Approach ##
+<h2>Approach</h2>
+<p align=”justify”>This project introduces an approach for safe and object-independent human-to-robot handovers using real time robotic vision and manipulation. We aim for general applicability by combining the power of a generic object detector <i>(darknet_ros)</i>, a real-time grasp selection algorithm <i>(ggcnn_humanseg_ros)</i> and two semantic segmentation modules for body segmentation <i>(bodyparts_ros)</i> and hand segmentation <i>(egohands_ros)</i>.</p>
 
-We aim for general applicability by combining the power of a generic object detector *(darknet_ros)*, a real-time grasp selection algorithm *(ggcnn_humanseg_ros)* and two semantic segmentation modules for body segmentation *(bodyparts_ros)* and hand segmentation *(egohands_ros)*. 
+<p align=centar><img src="./imgs/approach_GITHUB.png" width="400"/></p>
 
-<img src="./imgs/approach_GITHUB.png" width="400"/>
-
-The RGB-D camera is mounted at the robot's end effector and provides a steady stram of RGB and depth images that that are used by all modules. For each frame, the object detecter detects all objects within the camera's field of view and selects the ones within the robot's reach. Further, all pixels belonging to the human interaction partner and the partner's hands are segmented. The grasp selection module uses these inputs to calculate the a grasp quality estimation along with the associated grasp orientation and gripper width for each pixel in the depth image. Finally, the grasp point with the highest estimated success likelihood is chosen and translated into the robot's base frame. The robot driver module moves the end effector towards the selected grasp point via visual servoing. The segmentation masks are updated in real-time to dynamically handle the changes in the hand/body positions.
+<p align=”justify”>The RGB-D camera is mounted at the robot's end effector and provides a steady stram of RGB and depth images that that are used by all modules. For each frame, the object detecter detects all objects within the camera's field of view and selects the ones within the robot's reach. Further, all pixels belonging to the human interaction partner and the partner's hands are segmented. The grasp selection module uses these inputs to calculate the a grasp quality estimation along with the associated grasp orientation and gripper width for each pixel in the depth image. Finally, the grasp point with the highest estimated success likelihood is chosen and translated into the robot's base frame. The robot driver module moves the end effector towards the selected grasp point via visual servoing. The segmentation masks are updated in real-time to dynamically handle the changes in the hand/body positions.</p>
 
 ### Module bodyparts_ros ###
 
