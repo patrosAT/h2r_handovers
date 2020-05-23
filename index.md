@@ -59,7 +59,7 @@ This module implements a [GGCNN](https://github.com/dougsm/ggcnn). The node outp
 
 <p align="center">
 <img src="./imgs/ggcnn_RGB.png" width="400"/>
-<p>
+</p>
 
 ### Module h2r_handovers ###
 
