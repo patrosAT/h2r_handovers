@@ -89,7 +89,7 @@ The code developed within this project is written in Python 2.7 and 3.6, dependi
 
 ## Acknowledgments ##
 
-**Special thanks go to [TU Wien](www.tuwien.at) and the [Australian Center for Robotic Vision (ACRV)](http://roboticvision.org) for enabling this research project.**
+**Special thanks go to [TU Wien](https://www.tuwien.at) and the [Australian Center for Robotic Vision (ACRV)](http://roboticvision.org) for enabling this research project.**
 
 <p align="center"><img src="./imgs/CD_TUWien.png" height="50" alt="logo TU Wien"/></p>
 <p align="center"><img src="./imgs/CD_Birmingham.jpeg" height="50" alt="logo University Birmingham"/></p>
