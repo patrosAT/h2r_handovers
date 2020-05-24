@@ -12,11 +12,11 @@ description: Object-Independent Human-to-Robot Handovers using Real Time Robotic
 
 **Code:** [https://github.com/patrosAT/h2r_handovers](https://github.com/patrosAT/h2r_handovers)
 <p align="center">
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=GjPDilJO4F0" target="_blank"><img src="./imgs/handover_toy_car.png" 
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=SkTx4GLpw9E" target="_blank"><img src="./imgs/handover_toy_car.png" 
 alt="YouTube H2R Handovers" width="400" /></a>
 </p>
 
-[The youtube video](https://youtu.be/GjPDilJO4F0) shows the handover of 20 household objects from a frontal and a lateral perspective.
+[The youtube video](https://youtu.be/SkTx4GLpw9E) shows the handover of 20 household objects from a frontal and a lateral perspective.
 
 ---
 
