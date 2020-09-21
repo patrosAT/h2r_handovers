@@ -8,7 +8,7 @@ description: Object-Independent Human-to-Robot Handovers using Real Time Robotic
 
 **Publication:** IEEE Robotics and Automation Letters
 
-**Preprint:** https://arxiv.org/abs/2006.01797
+**Preprint:** [https://arxiv.org/abs/2006.01797](https://arxiv.org/abs/2006.01797)
 
 **Code:** [https://github.com/patrosAT/h2r_handovers](https://github.com/patrosAT/h2r_handovers)
 <p align="center">
