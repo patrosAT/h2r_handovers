@@ -6,9 +6,9 @@ description: Object-Independent Human-to-Robot Handovers using Real Time Robotic
 
 **Authors:** Patrick Rosenberger [[TU Wien]](https://www.mivp.tuwien.ac.at/team/patrick_rosenberger/EN/) [[orcid]](https://orcid.org/0000-0002-5504-0267) [[homepage]](https://www.roscon.at/team/), Akansel Cosgun [[Uni Monash]](https://research.monash.edu/en/persons/akansel-cosgun), Rhys Newbury, Jun Kwan, Valerio Ortenzi [[Uni Brimingham]](https://www.birmingham.ac.uk/staff/profiles/metallurgy/ortenzi-valerio.aspx) [[orcid]](https://orcid.org/0000-0002-8194-1616), Peter Corke [[QUT]](https://staff.qut.edu.au/staff/peter.corke) [[orcid]](https://orcid.org/0000-0001-6650-367X) [[homepage]](https://petercorke.com/), Manfred Grafinger [[TU Wien]](https://www.mivp.tuwien.ac.at/team/manfred_grafinger/EN/) [[orcid]](https://orcid.org/0000-0001-6596-1126)
 
-**Publication:** *coming soon*
+**Publication:** IEEE Robotics and Automation Letters
 
-**Preprint:** *coming soon*
+**Preprint:** https://arxiv.org/abs/2006.01797
 
 **Code:** [https://github.com/patrosAT/h2r_handovers](https://github.com/patrosAT/h2r_handovers)
 <p align="center">
@@ -17,6 +17,8 @@ alt="YouTube H2R Handovers" width="400" /></a>
 </p>
 
 [The youtube video](https://youtu.be/SkTx4GLpw9E) shows the handover of 20 household objects from a frontal and a lateral perspective.
+
+A detailed demonstration (incl. failed handovers) of the approach can be found in [this long version](https://youtu.be/u53mgDZI_so).
 
 ---
 
